@@ -1,12 +1,12 @@
 from django.contrib import admin
 from .models import Post, Tag, Comment
-from .forms import PostForm
 from django.utils.html import format_html
 
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 0
     fields = ['content', 'author', 'publish_date']
+    can_delete = False
     readonly_fields = ['content', 'author', 'publish_date']
 
 @admin.register(Post)
@@ -14,7 +14,6 @@ class PostModelAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'tags_rel', 'publish_date', 'published']
     search_fields = ['title', 'author__username']
     list_filter = ['published', 'publish_date']
-    form = PostForm
     readonly_fields = ['display_image']
     inlines = [CommentInline]
 

@@ -1,29 +1,35 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from .validators import (
+    validate_for_restricted_symbols,
+    validate_for_restricted_words,
+    validate_future_date
+)
 
 class Post(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
+    title = models.CharField(max_length=255, validators=[validate_for_restricted_symbols,
+                                                         validate_for_restricted_words])
+    content = models.TextField(validators=[validate_for_restricted_words])
     likes = models.PositiveIntegerField(default=0)
     dislike = models.PositiveIntegerField(default=0)
-    publish_date = models.DateField(default=timezone.now)
+    publish_date = models.DateField(default=timezone.now, validators=[validate_future_date])
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     published = models.BooleanField(default=False)
     image = models.ImageField(upload_to='posts/')
+    tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
 
     def __str__(self): return self.title
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50)
-    posts = models.ManyToManyField(Post, related_name='tags')
+    name = models.CharField(max_length=50, validators=[validate_for_restricted_words])
 
     def __str__(self): return self.name
 
 class Comment(models.Model):
-    content = models.TextField()
+    content = models.TextField(validators=[validate_for_restricted_words])
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
-    publish_date = models.DateField(default=timezone.now)
+    publish_date = models.DateField(default=timezone.now, validators=[validate_future_date])
     parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies',
                                        null=True, blank=True)
     likes = models.PositiveIntegerField(default=0)
