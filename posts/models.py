@@ -18,11 +18,19 @@ class Post(models.Model):
     published = models.BooleanField(default=False)
     image = models.ImageField(upload_to='posts/')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
+    categories = models.ManyToManyField('Category', related_name='posts')
 
     def __str__(self): return self.title
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, validators=[validate_for_restricted_words])
+    color = models.CharField(max_length=20,
+                             choices={'gray':'gray', 'orange':'orange',
+                                      'yellow': 'yellow', 'blue':'blue',
+                                      'cyan':'cyan', 'red': 'red',
+                                      'purple': 'purple'},
+                             default='gray'
+                             )
 
     def __str__(self): return self.name
 
@@ -37,3 +45,15 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
 
     def __str__(self): return self.content[:15]
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    parent_category = models.ForeignKey('self', on_delete=models.CASCADE, related_name='subcategories',
+                                       null=True, blank=True)
+    def __str__(self): return self.name
+
+    class Meta:
+        verbose_name_plural  = 'categories'
+
+
