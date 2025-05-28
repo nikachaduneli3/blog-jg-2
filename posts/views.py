@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from django.db.models import F
-from .models import Post
-from .serializers import PostListSerializer, PostDetailSerializer
+from .models import Post, Comment
+from .serializers import PostListSerializer, PostDetailSerializer, CommentSerializer
 from .filters import  PostFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -36,5 +36,15 @@ def dislike_post(request, pk, *args, **kwargs):
     post.dislike = F('dislike') + 1
     post.save()
     return Response({'message': 'success'}, status=200)
+
+
+class PostCommentsApiView(ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        res = super().get_queryset()
+        post_id = self.kwargs.get('post_id')
+        return res.filter(post_id=post_id, parent_comment=None)
 
 

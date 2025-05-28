@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Comment
 
 class PostListSerializer(serializers.ModelSerializer):
     content = serializers.CharField(write_only=True)
@@ -18,3 +18,21 @@ class PostDetailSerializer(serializers.ModelSerializer):
                   'likes', 'dislike',
                   'author', 'publish_date', 'views',
                   'image', 'categories', 'tags']
+
+class ReplySerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'author', 'publish_date',
+                          'likes', 'dislike', 'replies']
+
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    replies = ReplySerializer(many=True, read_only=True)
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'author', 'publish_date',
+                  'likes', 'dislike', 'replies']
+        depth = 1
