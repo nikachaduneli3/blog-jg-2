@@ -36,3 +36,5 @@ def dislike_post(request, pk, *args, **kwargs):
     post.dislike = F('dislike') + 1
     post.save()
     return Response({'message': 'success'}, status=200)
+
+
