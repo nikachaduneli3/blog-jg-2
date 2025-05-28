@@ -19,6 +19,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
     categories = models.ManyToManyField('Category', related_name='posts')
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self): return self.title
 
