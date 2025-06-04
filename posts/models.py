@@ -21,6 +21,11 @@ class Post(models.Model):
     categories = models.ManyToManyField('Category', related_name='posts')
     views = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['title'])
+        ]
+
     def __str__(self): return self.title
 
 class Tag(models.Model):

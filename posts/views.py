@@ -16,13 +16,16 @@ from .serializers import (
 from .filters import  PostFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .pagination import PostPagination
 from .perrmissions import IsAuthorOrReadOnly
+
+
 class PostListApiView(ListCreateAPIView):
     queryset = Post.objects.filter(published=True)
     serializer_class = PostListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PostFilter
+    pagination_class = PostPagination
 
 class PostRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.filter(published=True)
@@ -37,15 +40,27 @@ class PostRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
         
 @api_view(['POST'])
 def like_post(request, pk, *args, **kwargs):
+    undo = request.data.get('undo')
+
     post = Post.objects.get(id=pk)
-    post.likes += F('like') + 1
+    if undo:
+        post.likes = F('likes') - 1
+    else:
+        post.likes = F('likes') + 1
+
     post.save()
     return Response({'message': 'success'}, status=200)
 
 @api_view(['POST'])
 def dislike_post(request, pk, *args, **kwargs):
+    undo = request.data.get('undo')
+
     post = Post.objects.get(id=pk)
-    post.dislike = F('dislike') + 1
+    if undo:
+        post.dislike = F('dislike') + 1
+    else:
+        post.dislike = F('dislike') - 1
+
     post.save()
     return Response({'message': 'success'}, status=200)
 
