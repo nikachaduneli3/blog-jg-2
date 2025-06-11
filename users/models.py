@@ -7,3 +7,6 @@ class User(AbstractUser):
     profile_picture = models.ImageField()
     gender = models.CharField(max_length=1, choices={'m': 'male',
                                                       'f': 'female'})
+    following = models.ManyToManyField('self', symmetrical=False,
+                                       related_name='followers')
+
