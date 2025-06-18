@@ -149,3 +149,8 @@ from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=40),
 }
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_HOST_USER="chadunelinika15@mziuri.ge"
+EMAIL_HOST_PASSWORD="nxpadltcrlrsbhzs"
+EMAIL_USE_TLS=True

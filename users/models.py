@@ -10,3 +10,21 @@ class User(AbstractUser):
     following = models.ManyToManyField('self', symmetrical=False,
                                        related_name='followers')
 
+
+class Request(models.Model):
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE,
+                           related_name='received_requests')
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE,
+                           related_name='sent_requests')
+
+    def accept(self):
+        self.to_user.followers.add(self.from_user)
+        self.delete()
+
+    def follow_back(self):
+        self.to_user.followers.add(self.from_user)
+        self.to_user.following.add(self.from_user)
+        self.delete()
+
+    def reject(self):
+        self.delete()

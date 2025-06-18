@@ -1,5 +1,8 @@
 from django.template.context_processors import request
 from rest_framework import serializers
+from .models import User
+
+
 
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -13,7 +16,13 @@ class RegisterSerializer(serializers.Serializer):
     address = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        print('=====================')
         if attrs.get('password') != attrs.get('confirm_password'):
             raise serializers.ValidationError('passwords didn\'t match!')
         return attrs
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'profile_picture',
+                  'gender', 'first_name', 'last_name']
+

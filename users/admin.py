@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import TabularInline
 
-from .models import User
+from .models import User, Request
 from django.utils.html import format_html
 from django.contrib.auth.admin import UserAdmin
 from .forms import UserForm
@@ -16,6 +16,16 @@ class FollowersInline(TabularInline):
     can_delete = False
 
 
+class FollowingInline(TabularInline):
+    verbose_name = 'following'
+    verbose_name_plural = 'following'
+    model = User.following.through
+    fk_name = 'from_user'
+    extra = 0
+    readonly_fields = ['from_user', 'to_user']
+    can_delete = False
+
+
 
 @admin.register(User)
 class UserModelAdmin(admin.ModelAdmin):
@@ -24,8 +34,11 @@ class UserModelAdmin(admin.ModelAdmin):
     list_filter = ['is_active', 'is_staff', 'is_superuser']
     readonly_fields = ['profile_image_display']
     form = UserForm
-    inlines = [FollowersInline]
+    inlines = [FollowersInline, FollowingInline]
 
     def profile_image_display(self, obj):
         if obj.profile_picture:
             return format_html(f'<img src="{obj.profile_picture.url}" width=400/>')
+
+
+admin.site.register(Request)
