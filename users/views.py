@@ -7,7 +7,7 @@ from rest_framework.generics import (GenericAPIView,
                                      RetrieveAPIView,
                                      RetrieveUpdateAPIView)
 from rest_framework.views import APIView
-
+from pprint import pprint
 from .serializers import RegisterSerializer
 from .models import User, Request
 from django.contrib.sites.shortcuts import get_current_site
@@ -19,6 +19,8 @@ from .serializers import UserSerializer
 from posts.models import Post
 from posts.serializers import PostListSerializer
 from posts.pagination import PostPagination
+from .permissions import PostViewPermission
+
 
 def generate_account_activation_link(request, user):
     domain = get_current_site(request).domain
@@ -85,6 +87,7 @@ class UserPostsListApiView(ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostListSerializer
     pagination_class = PostPagination
+    permission_classes = [PostViewPermission]
 
     def get_queryset(self):
         return self.queryset.filter(author_id=self.kwargs.get('pk'))
@@ -99,7 +102,7 @@ def send_follow_request(request, pk):
 class RequestsDetailApiView(APIView):
     def get_follow_request(self, request, request_pk):
         follow_request = Request.objects.filter(
-            pk=request_pk, to_user=request.user)
+            pk=request_pk)
         if follow_request.exists():
             return  follow_request.first()
 

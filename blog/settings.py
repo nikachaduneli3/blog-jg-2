@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
-
+from . import get_configs
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(rrtg1l4)z-=381c!hqd5+!@u*=pl%*fg#l!$f==++8#$!y4g#'
-
+SECRET_KEY = get_configs.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_configs.DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -80,13 +79,7 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
+DATABASES = get_configs.get_db_conf()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -149,8 +142,9 @@ from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=40),
 }
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_HOST_USER="chadunelinika15@mziuri.ge"
-EMAIL_HOST_PASSWORD="nxpadltcrlrsbhzs"
-EMAIL_USE_TLS=True
+
+EMAIL_PORT=get_configs.EMAIL_PORT
+EMAIL_HOST=get_configs.EMAIL_HOST
+EMAIL_HOST_USER=get_configs.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD=get_configs.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS=get_configs.EMAIL_USE_TLS
